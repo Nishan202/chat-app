@@ -2,6 +2,7 @@ import 'package:chat_app/cubit/register/register_cubit.dart';
 import 'package:chat_app/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import '../../constant/app_string.dart';
 import '../../services/text_field_validation/validation.dart';
 import '../widgets/custom_button.dart';
@@ -15,7 +16,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-
   GlobalKey<FormState> signUpkey = GlobalKey<FormState>();
   Validator textValidator = Validator();
   final TextEditingController _fullNameController = TextEditingController();
@@ -29,28 +29,26 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Form(
+    return SafeArea(
+      child: Scaffold(
+        // appBar: AppBar(),
+        body: Form(
           key: signUpkey,
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.all(20),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     AppString.signUp,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .headlineLarge,
+                    style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   SizedBox(height: 15),
-                  Text(AppString.signUpSubHeading, style: Theme
-                      .of(context)
-                      .textTheme
-                      .bodySmall),
+                  Text(
+                    AppString.signUpSubHeading,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                   SizedBox(height: 30),
                   CustomTextfield(
                     labelText: AppString.fullNameHint,
@@ -90,9 +88,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         setState(() {});
                       },
                       icon:
-                      isPasswordVisible
-                          ? const Icon(Icons.visibility_off)
-                          : const Icon(Icons.visibility),
+                          isPasswordVisible
+                              ? const Icon(Icons.visibility_off)
+                              : const Icon(Icons.visibility),
                     ),
                     validate: (value) {
                       return textValidator.validatePassword(value!);
@@ -106,8 +104,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     isobscureText: !_isPasswordVisible,
                     validate: (value) {
                       return textValidator.validateConfirmPassword(
-                          _passwordController.text,
-                          _confirmPassController.text);
+                        _passwordController.text,
+                        _confirmPassController.text,
+                      );
                     },
                     suffixIcon: IconButton(
                       onPressed: () {
@@ -115,81 +114,93 @@ class _SignupScreenState extends State<SignupScreen> {
                         setState(() {});
                       },
                       icon:
-                      _isPasswordVisible
-                          ? const Icon(Icons.visibility_off)
-                          : const Icon(Icons.visibility),
+                          _isPasswordVisible
+                              ? const Icon(Icons.visibility_off)
+                              : const Icon(Icons.visibility),
                     ),
                   ),
                   SizedBox(height: 25),
-                  // CustomButton(
-                  //   title: AppString.signUp,
-                  //   btnType: ButtonType.elevated,
-                  //   onClick: () {
-                  //     // Form validation with region button
-                  //     if (signUpkey.currentState!.validate()) {
-                  //       String email = _emailController.text;
-                  //       String password = _passwordController.text;
-                  //       if(email.isNotEmpty && password.isNotEmpty){
-                  //         UserModel newUser = UserModel(name: _fullNameController.text, email: _emailController.text, phoneNo: _phoneController.text, createdAt: DateTime.now().millisecondsSinceEpoch.toString(), isOnline: false, status: 1, profilePic: "", profileStatus: 1);
-                  //         BlocProvider.of<RegisterCubit>(context).registerUser(newUser, password);
-                  //       }
-                  //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Register Successful')));
-                  //     }
-                  //     // AppRoutes.navigateOffTo(RouteName.SUBSCRIPTION_SCREEN);
-                  //   },
-                  // ),
-                  BlocConsumer<RegisterCubit, RegisterState>(builder: (_, state){
-                    if(state is RegisterLoadingState){
-                      return CustomButton(title: AppString.signUp, loading: true, onClick: (){}, btnType: ButtonType.elevated);
-                    }
-                    return CustomButton(
-                      title: AppString.signUp,
-                      btnType: ButtonType.elevated,
-                      onClick: () {
-                        // Form validation with region button
-                        if (signUpkey.currentState!.validate()) {
-                          String email = _emailController.text;
-                          String password = _passwordController.text;
-                          if(email.isNotEmpty && password.isNotEmpty){
-                            UserModel newUser = UserModel(name: _fullNameController.text, email: email, password : password, phoneNo: _phoneController.text, createdAt: DateTime.now().millisecondsSinceEpoch.toString(), isOnline: false, status: 1, profilePic: "", profileStatus: 1);
-                            BlocProvider.of<RegisterCubit>(context).registerUser(newUser, password);
+                  BlocConsumer<RegisterCubit, RegisterState>(
+                    builder: (_, state) {
+                      if (state is RegisterLoadingState) {
+                        return CustomButton(
+                          title: AppString.signUp,
+                          loading: true,
+                          onClick: () {},
+                          btnType: ButtonType.elevated,
+                        );
+                      }
+                      return CustomButton(
+                        title: AppString.signUp,
+                        btnType: ButtonType.elevated,
+                        // loading: false,
+                        onClick: () {
+                          // Form validation with region button
+                          if (signUpkey.currentState!.validate()) {
+                            // if(email.isNotEmpty && password.isNotEmpty){
+                            UserModel newUser = UserModel(
+                              name: _fullNameController.text,
+                              email: _emailController.text,
+                              phoneNo: _phoneController.text,
+                              createdAt:
+                                  DateTime.now().millisecondsSinceEpoch
+                                      .toString(),
+                              isOnline: false,
+                              status: 1,
+                              profilePic: "",
+                              profileStatus: 1,
+                            );
+                            BlocProvider.of<RegisterCubit>(
+                              context,
+                            ).registerUser(newUser, _passwordController.text);
+                            // }
                           }
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Register Successful')));
-                        }
-                        // AppRoutes.navigateOffTo(RouteName.SUBSCRIPTION_SCREEN);
-                      },
-                    );
-                  }, listener: (_, state){
-                    if(state is RegisterFailedState){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.white, content: Text(state.errorMessage, style: TextStyle(color: Colors.red),)));
-                    } else if(state is RegisterSuccessState){
-                      Navigator.pop(context);
-                    }
-                  }),
+                          // AppRoutes.navigateOffTo(RouteName.SUBSCRIPTION_SCREEN);
+                        },
+                      );
+                    },
+                    listener: (_, state) {
+                      if (state is RegisterFailedState) {
+                        Get.snackbar(
+                          "Error",
+                          state.errorMessage,
+                          backgroundColor: Colors.redAccent,
+                          colorText: Colors.white,
+                          snackPosition: SnackPosition.TOP,
+                        );
+                      } else if (state is RegisterSuccessState) {
+                        Get.snackbar(
+                          "Success",
+                          "User registered successfully",
+                          backgroundColor: Colors.greenAccent,
+                          colorText: Colors.white,
+                          snackPosition: SnackPosition.TOP,
+                        );
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
                   SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          AppString.alreadyHaveAnAccount,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodySmall
+                        AppString.alreadyHaveAnAccount,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                       TextButton(
                         onPressed: () {
-                          // AppRoutes.goBack();
+                          Navigator.pop(context);
                         },
                         child: Text(
                           AppString.signIn,
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(decoration: TextDecoration.underline,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge!.copyWith(
+                            decoration: TextDecoration.underline,
                             decorationThickness: 2,
-                            decorationStyle: TextDecorationStyle.solid,),
+                            decorationStyle: TextDecorationStyle.solid,
+                          ),
                         ),
                       ),
                     ],
