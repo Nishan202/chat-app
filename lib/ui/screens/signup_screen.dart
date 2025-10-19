@@ -29,10 +29,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        // appBar: AppBar(),
-        body: Form(
+    return Scaffold(
+      // appBar: AppBar(),
+      body: SafeArea(
+        child: Form(
           key: signUpkey,
           child: Padding(
             padding: const EdgeInsets.all(15),
@@ -141,6 +141,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             UserModel newUser = UserModel(
                               name: _fullNameController.text,
                               email: _emailController.text,
+                              password: _passwordController.text,
                               phoneNo: _phoneController.text,
                               createdAt:
                                   DateTime.now().millisecondsSinceEpoch

@@ -29,15 +29,16 @@ class _SigninScreenState extends State<SigninScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Form(
+    return Scaffold(
+      appBar: AppBar(),
+      body: SafeArea(
+        child: Form(
           key: signInkey,
           child: Padding(
             padding: EdgeInsets.all(15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            child: ListView(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 Text(
                   AppString.signIn,

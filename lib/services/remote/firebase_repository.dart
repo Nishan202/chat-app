@@ -1,3 +1,4 @@
+import 'package:chat_app/model/message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ class FirebaseRepository {
 
   static const String COLLECTION_USERS = "users";
   static const String COLLECTION_CHATROOM = "chatroom";
+  static const String COLLECTION_MESSAGES = "messages";
   static const String PREFS_USER_ID = "userId";
 
   Future<void> createUser({
@@ -61,5 +63,82 @@ class FirebaseRepository {
 
   static Future<QuerySnapshot<Map<String, dynamic>>> getAllContacts() async {
     return await firebaseFirestore.collection(COLLECTION_USERS).get();
+  }
+
+  static Future<String?> getCurrentUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(PREFS_USER_ID);
+  }
+
+  static Future<String?> getChatId({
+    required String fromId,
+    required String toId,
+  }) async {
+    // String chatId;
+    if (fromId.hashCode <= toId.hashCode) {
+      return '${fromId}_$toId';
+    } else {
+      return '${toId}_$fromId';
+    }
+    // return chatId;
+  }
+
+  static sendTextMessage({
+    required String toId,
+    required String message,
+  }) async {
+    String? fromId = await getCurrentUserId();
+    String? chatId = await getChatId(fromId: fromId ?? '', toId: toId);
+    String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    MessageModel messageModel = MessageModel(
+      messageId: currentTime,
+      message: message,
+      receiverId: toId,
+      senderId: fromId,
+      sendAt: currentTime,
+    );
+    await firebaseFirestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .doc(currentTime)
+        .set(messageModel.toJson())
+        .catchError((error) {
+          throw (Exception("Error : $error"));
+        });
+  }
+
+  static sendImage({
+    required String toId,
+    String message = '',
+    required String imageUrl,
+  }) async {
+    String? fromId = await getCurrentUserId();
+    String? chatId = await getChatId(fromId: fromId ?? '', toId: toId);
+    String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    MessageModel messageModel = MessageModel(
+      messageId: currentTime,
+      message: message,
+      imageUrl: imageUrl,
+      receiverId: toId,
+      senderId: fromId,
+      sendAt: currentTime,
+      messageType: 1,
+    );
+    await firebaseFirestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .doc(currentTime)
+        .set(messageModel.toJson())
+        .catchError((error) {
+          throw (Exception("Error : $error"));
+        });
+  }
+
+  static Future<void> signOut() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(PREFS_USER_ID);
+    await firebaseAuth.signOut();
   }
 }
