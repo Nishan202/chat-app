@@ -5,7 +5,7 @@ import 'package:chat_app/services/remote/firebase_repository.dart';
 import 'package:chat_app/ui/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+// import 'package:get/get.dart';
 
 import '../../constant/app_string.dart';
 import '../../services/text_field_validation/validation.dart';
@@ -119,30 +119,38 @@ class _SigninScreenState extends State<SigninScreen> {
                     );
                   },
                   listener: (_, state) {
-                    if (state is LoginFailedState) {
+                    if (state is LoginSuccessState) {
                       // isLoading = false;
                       // setState(() {});
-                      Get.snackbar(
-                        "Error",
-                        state.errorMessage,
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.TOP,
-                      );
-                    } else if (state is LoginSuccessState) {
-                      // Go to Chat list screen
-                      // isLoading = false;
-                      // setState(() {});
-                      Get.snackbar(
-                        "Success",
-                        "User Login successfully",
-                        backgroundColor: Colors.greenAccent,
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.TOP,
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'User Login successfully',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.greenAccent,
+                          behavior: SnackBarBehavior.floating,
+                          dismissDirection: DismissDirection.endToStart,
+                        ),
                       );
                       Navigator.pushReplacementNamed(
                         context,
-                        AppRoutes.CONTACTS_SCREEN,
+                        AppRoutes.CHATLIST_SCREEN,
+                      );
+                    } else if (state is LoginFailedState) {
+                      // Go to Chat list screen
+                      // isLoading = false;
+                      // setState(() {});
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            state.errorMessage,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.redAccent,
+                          behavior: SnackBarBehavior.floating,
+                        ),
                       );
                     }
                   },

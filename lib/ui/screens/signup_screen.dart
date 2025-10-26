@@ -162,20 +162,27 @@ class _SignupScreenState extends State<SignupScreen> {
                     },
                     listener: (_, state) {
                       if (state is RegisterFailedState) {
-                        Get.snackbar(
-                          "Error",
-                          state.errorMessage,
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                          snackPosition: SnackPosition.TOP,
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              state.errorMessage,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.redAccent,
+                            behavior: SnackBarBehavior.floating,
+                          ),
                         );
                       } else if (state is RegisterSuccessState) {
-                        Get.snackbar(
-                          "Success",
-                          "User registered successfully",
-                          backgroundColor: Colors.greenAccent,
-                          colorText: Colors.white,
-                          snackPosition: SnackPosition.TOP,
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'User Registered successfully',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.greenAccent,
+                            behavior: SnackBarBehavior.floating,
+                            dismissDirection: DismissDirection.endToStart,
+                          ),
                         );
                         Navigator.pop(context);
                       }

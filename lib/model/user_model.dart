@@ -5,7 +5,7 @@ class UserModel {
   String? password;
   String? phoneNo;
   String? createdAt;
-  bool isOnline = false;
+  bool? isOnline = false;
   int? status = 1; // 1 -> Active , 2 -> Inactive, 3 -> Suspended
   String? profilePic = "";
   int? profileStatus = 1;
@@ -17,7 +17,7 @@ class UserModel {
     this.password,
     this.phoneNo,
     this.createdAt,
-    required this.isOnline,
+    this.isOnline,
     this.status,
     this.profilePic,
     this.profileStatus,

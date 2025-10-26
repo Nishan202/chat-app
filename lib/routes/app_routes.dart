@@ -27,4 +27,22 @@ class AppRoutes {
     CHATLIST_SCREEN: (_) => ChatListScreen(),
     CONTACTS_SCREEN: (_) => ContactsScreen(),
   };
+
+  // Helper to open ChatScreen by directly constructing it with arguments.
+  // This avoids relying on route arguments (ModalRoute or Get.arguments).
+  // static Future openChatScreen(
+  //   BuildContext context, {
+  //   required String userId,
+  //   String? name,
+  //   String? profilePic,
+  // }) {
+  //   return Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder:
+  //           (_) =>
+  //               ChatScreen(userId: userId, name: name, profilePic: profilePic),
+  //     ),
+  //   );
+  // }
 }

@@ -12,6 +12,7 @@ class FirebaseRepository {
   static const String COLLECTION_USERS = "users";
   static const String COLLECTION_CHATROOM = "chatroom";
   static const String COLLECTION_MESSAGES = "messages";
+  static const String IDS_FIELD = "ids";
   static const String PREFS_USER_ID = "userId";
 
   Future<void> createUser({
@@ -70,10 +71,7 @@ class FirebaseRepository {
     return prefs.getString(PREFS_USER_ID);
   }
 
-  static Future<String?> getChatId({
-    required String fromId,
-    required String toId,
-  }) async {
+  static String getChatId({required String fromId, required String toId}) {
     // String chatId;
     if (fromId.hashCode <= toId.hashCode) {
       return '${fromId}_$toId';
@@ -88,7 +86,7 @@ class FirebaseRepository {
     required String message,
   }) async {
     String? fromId = await getCurrentUserId();
-    String? chatId = await getChatId(fromId: fromId ?? '', toId: toId);
+    String? chatId = getChatId(fromId: fromId ?? '', toId: toId);
     String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
     MessageModel messageModel = MessageModel(
       messageId: currentTime,
@@ -97,6 +95,10 @@ class FirebaseRepository {
       senderId: fromId,
       sendAt: currentTime,
     );
+
+    await firebaseFirestore.collection(COLLECTION_CHATROOM).doc(chatId).set({
+      IDS_FIELD: [fromId, toId],
+    }, SetOptions(merge: true));
     await firebaseFirestore
         .collection(COLLECTION_CHATROOM)
         .doc(chatId)
@@ -114,7 +116,7 @@ class FirebaseRepository {
     required String imageUrl,
   }) async {
     String? fromId = await getCurrentUserId();
-    String? chatId = await getChatId(fromId: fromId ?? '', toId: toId);
+    String? chatId = getChatId(fromId: fromId ?? '', toId: toId);
     String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
     MessageModel messageModel = MessageModel(
       messageId: currentTime,
@@ -125,6 +127,9 @@ class FirebaseRepository {
       sendAt: currentTime,
       messageType: 1,
     );
+    await firebaseFirestore.collection(COLLECTION_CHATROOM).doc(chatId).set({
+      IDS_FIELD: [fromId, toId],
+    }, SetOptions(merge: true));
     await firebaseFirestore
         .collection(COLLECTION_CHATROOM)
         .doc(chatId)
@@ -134,6 +139,55 @@ class FirebaseRepository {
         .catchError((error) {
           throw (Exception("Error : $error"));
         });
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream({
+    required String toId,
+    required String fromId,
+  }) {
+    String chatId = getChatId(fromId: fromId, toId: toId);
+    return firebaseFirestore
+        .collection(COLLECTION_CHATROOM)
+        .doc(chatId)
+        .collection(COLLECTION_MESSAGES)
+        .orderBy('sendAt', descending: false)
+        .snapshots();
+  }
+
+  static Future<List<MessageModel>> getAllMessages({
+    required String toId,
+    required String fromId,
+  }) async {
+    String chatId = getChatId(fromId: fromId, toId: toId);
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await firebaseFirestore
+            .collection(COLLECTION_CHATROOM)
+            .doc(chatId)
+            .collection(COLLECTION_MESSAGES)
+            .orderBy('sendAt', descending: false)
+            .get();
+
+    return querySnapshot.docs
+        .map((doc) => MessageModel.fromJson(doc.data()))
+        .toList();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLiveChatContactStream({
+    required String fromId,
+  }) {
+    return firebaseFirestore
+        .collection(COLLECTION_CHATROOM)
+        .where("ids", arrayContains: fromId)
+        .snapshots();
+  }
+
+  static Future<DocumentSnapshot<Map<String, dynamic>>> getUserInfoById({
+    required String userId,
+  }) async {
+    return await firebaseFirestore
+        .collection(COLLECTION_USERS)
+        .doc(userId)
+        .get();
   }
 
   static Future<void> signOut() async {
