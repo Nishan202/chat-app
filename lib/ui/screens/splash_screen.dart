@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Timer(const Duration(seconds: 3), () async {
       SharedPreferences preference = await SharedPreferences.getInstance();
-      String? value = preference.getString(FirebaseRepository.PREFS_USER_ID);
+      String? value = preference.getString(FirebaseRepository.prefsUserId);
       // String? token = preference.getString('token');
 
       //

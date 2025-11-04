@@ -1,13 +1,10 @@
-import 'dart:developer';
-
 import 'package:chat_app/constant/image_path.dart';
+import 'package:chat_app/model/message_model.dart';
 import 'package:chat_app/model/user_model.dart';
 import 'package:chat_app/routes/app_routes.dart';
 import 'package:chat_app/services/remote/firebase_repository.dart';
-import 'package:chat_app/ui/screens/contacts_screen.dart';
-import 'package:chat_app/ui/screens/signIn_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/web.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -20,6 +17,16 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   Logger logger = Logger();
   String fromId = "";
+  final DateFormat _timeFormat = DateFormat('h.mm a');
+
+  String _formatSendAt(String? sendAt) {
+    if (sendAt == null) return '';
+    final millis = int.tryParse(sendAt);
+    if (millis == null) return '';
+    final dt = DateTime.fromMillisecondsSinceEpoch(millis);
+    return _timeFormat.format(dt).toLowerCase();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,8 +48,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
               // Implement refresh functionality here
-              // await FirebaseAuth.instance.signOut();
               FirebaseRepository.signOut();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Logged out successfully")),
+              );
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.LOGIN_SCREEN_ROUTE,
@@ -85,6 +94,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       UserModel currentModel = UserModel.fromDoc(
                         userSnapshot.data?.data() ?? {},
                       );
+
                       return Card(
                         elevation: 3,
                         child: ListTile(
@@ -104,7 +114,116 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                         as ImageProvider,
                           ),
                           title: Text(currentModel.name ?? ""),
-                          subtitle: Text(currentModel.email ?? ""),
+                          subtitle: StreamBuilder(
+                            stream: FirebaseRepository.getLastMessage(
+                              toId: currentModel.userId ?? '',
+                              fromId: fromId,
+                            ),
+                            builder: (_, lastMessageSnapshot) {
+                              if (lastMessageSnapshot.hasData &&
+                                  lastMessageSnapshot.data!.docs.isNotEmpty) {
+                                MessageModel lastMessage =
+                                    MessageModel.fromJson(
+                                      lastMessageSnapshot.data!.docs[0].data(),
+                                    );
+                                return lastMessage.senderId == fromId
+                                    ? Row(
+                                      children: [
+                                        Icon(
+                                          Icons.done_all_rounded,
+                                          size: 16,
+                                          color:
+                                              lastMessage.readAt != ""
+                                                  ? Colors.blue
+                                                  : Colors.grey,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Expanded(
+                                          child: Text(
+                                            lastMessage.messageType == 0
+                                                ? lastMessage.message ?? ""
+                                                : "📷 Photo",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    : Text(
+                                      lastMessage.messageType == 0
+                                          ? lastMessage.message ?? ""
+                                          : "📷 Photo",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                              }
+                              return SizedBox.shrink();
+                            },
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              StreamBuilder(
+                                stream: FirebaseRepository.getLastMessage(
+                                  toId: currentModel.userId ?? '',
+                                  fromId: fromId,
+                                ),
+                                builder: (_, lastMessageSnapshot) {
+                                  if (lastMessageSnapshot.hasData &&
+                                      lastMessageSnapshot
+                                          .data!
+                                          .docs
+                                          .isNotEmpty) {
+                                    MessageModel lastMessage =
+                                        MessageModel.fromJson(
+                                          lastMessageSnapshot.data!.docs[0]
+                                              .data(),
+                                        );
+                                    return Text(
+                                      _formatSendAt(lastMessage.sendAt),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  }
+                                  return SizedBox.shrink();
+                                },
+                              ),
+                              StreamBuilder(
+                                stream:
+                                    FirebaseRepository.getUnreadMessageCount(
+                                      toId: currentModel.userId ?? '',
+                                      fromId: fromId,
+                                    ),
+                                builder: (_, undreadMessageCountSnapShot) {
+                                  Logger().i(
+                                    "Unread Message Count Snapshot: ${undreadMessageCountSnapShot.data?.docs.length}",
+                                  );
+                                  if (undreadMessageCountSnapShot.hasData &&
+                                      undreadMessageCountSnapShot
+                                          .data!
+                                          .docs
+                                          .isNotEmpty) {
+                                    return CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Colors.greenAccent,
+                                      child: Text(
+                                        '${undreadMessageCountSnapShot.data!.docs.length}',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return SizedBox.shrink();
+                                },
+                              ),
+                            ],
+                          ),
+
                           onTap:
                               () => Navigator.pushNamed(
                                 context,

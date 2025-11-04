@@ -9,11 +9,11 @@ class FirebaseRepository {
   static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   static final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  static const String COLLECTION_USERS = "users";
-  static const String COLLECTION_CHATROOM = "chatroom";
-  static const String COLLECTION_MESSAGES = "messages";
-  static const String IDS_FIELD = "ids";
-  static const String PREFS_USER_ID = "userId";
+  static const String collectionUsers = "users";
+  static const String collectionChatroom = "chatroom";
+  static const String collectionMessages = "messages";
+  static const String idsField = "ids";
+  static const String prefsUserId = "userId";
 
   Future<void> createUser({
     required UserModel user,
@@ -27,7 +27,7 @@ class FirebaseRepository {
       if (userCredential.user != null) {
         user.userId = userCredential.user!.uid;
         firebaseFirestore
-            .collection(COLLECTION_USERS)
+            .collection(collectionUsers)
             .doc(userCredential.user!.uid)
             .set(user.toDoc())
             .catchError((error) {
@@ -53,7 +53,7 @@ class FirebaseRepository {
       if (userCredential.user != null) {
         // add user id in preference
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(PREFS_USER_ID, userCredential.user!.uid);
+        prefs.setString(prefsUserId, userCredential.user!.uid);
       }
     } on FirebaseAuthException catch (e) {
       throw (Exception("Error : ${e.message}"));
@@ -63,12 +63,12 @@ class FirebaseRepository {
   }
 
   static Future<QuerySnapshot<Map<String, dynamic>>> getAllContacts() async {
-    return await firebaseFirestore.collection(COLLECTION_USERS).get();
+    return await firebaseFirestore.collection(collectionUsers).get();
   }
 
   static Future<String?> getCurrentUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(PREFS_USER_ID);
+    return prefs.getString(prefsUserId);
   }
 
   static String getChatId({required String fromId, required String toId}) {
@@ -96,13 +96,13 @@ class FirebaseRepository {
       sendAt: currentTime,
     );
 
-    await firebaseFirestore.collection(COLLECTION_CHATROOM).doc(chatId).set({
-      IDS_FIELD: [fromId, toId],
+    await firebaseFirestore.collection(collectionChatroom).doc(chatId).set({
+      idsField: [fromId, toId],
     }, SetOptions(merge: true));
     await firebaseFirestore
-        .collection(COLLECTION_CHATROOM)
+        .collection(collectionChatroom)
         .doc(chatId)
-        .collection(COLLECTION_MESSAGES)
+        .collection(collectionMessages)
         .doc(currentTime)
         .set(messageModel.toJson())
         .catchError((error) {
@@ -127,13 +127,13 @@ class FirebaseRepository {
       sendAt: currentTime,
       messageType: 1,
     );
-    await firebaseFirestore.collection(COLLECTION_CHATROOM).doc(chatId).set({
-      IDS_FIELD: [fromId, toId],
+    await firebaseFirestore.collection(collectionChatroom).doc(chatId).set({
+      idsField: [fromId, toId],
     }, SetOptions(merge: true));
     await firebaseFirestore
-        .collection(COLLECTION_CHATROOM)
+        .collection(collectionChatroom)
         .doc(chatId)
-        .collection(COLLECTION_MESSAGES)
+        .collection(collectionMessages)
         .doc(currentTime)
         .set(messageModel.toJson())
         .catchError((error) {
@@ -147,9 +147,9 @@ class FirebaseRepository {
   }) {
     String chatId = getChatId(fromId: fromId, toId: toId);
     return firebaseFirestore
-        .collection(COLLECTION_CHATROOM)
+        .collection(collectionChatroom)
         .doc(chatId)
-        .collection(COLLECTION_MESSAGES)
+        .collection(collectionMessages)
         .orderBy('sendAt', descending: false)
         .snapshots();
   }
@@ -161,9 +161,9 @@ class FirebaseRepository {
     String chatId = getChatId(fromId: fromId, toId: toId);
     QuerySnapshot<Map<String, dynamic>> querySnapshot =
         await firebaseFirestore
-            .collection(COLLECTION_CHATROOM)
+            .collection(collectionChatroom)
             .doc(chatId)
-            .collection(COLLECTION_MESSAGES)
+            .collection(collectionMessages)
             .orderBy('sendAt', descending: false)
             .get();
 
@@ -176,7 +176,7 @@ class FirebaseRepository {
     required String fromId,
   }) {
     return firebaseFirestore
-        .collection(COLLECTION_CHATROOM)
+        .collection(collectionChatroom)
         .where("ids", arrayContains: fromId)
         .snapshots();
   }
@@ -185,14 +185,62 @@ class FirebaseRepository {
     required String userId,
   }) async {
     return await firebaseFirestore
-        .collection(COLLECTION_USERS)
+        .collection(collectionUsers)
         .doc(userId)
         .get();
   }
 
+  static void updateReadStatus({
+    required String toId,
+    required String fromId,
+    required String messageId,
+  }) async {
+    String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    // String? fromId = await getCurrentUserId();
+    String chatId = getChatId(fromId: fromId, toId: toId);
+
+    await firebaseFirestore
+        .collection(collectionChatroom)
+        .doc(chatId)
+        .collection(collectionMessages)
+        .doc(messageId)
+        .update({'readAt': currentTime})
+        .catchError((error) {
+          throw (Exception("Error : $error"));
+        });
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage({
+    required String toId,
+    required String fromId,
+  }) {
+    String chatId = getChatId(fromId: fromId, toId: toId);
+    return firebaseFirestore
+        .collection(collectionChatroom)
+        .doc(chatId)
+        .collection(collectionMessages)
+        .orderBy('sendAt', descending: true)
+        .limit(1)
+        .snapshots();
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUnreadMessageCount({
+    required String toId,
+    required String fromId,
+  }) {
+    String chatId = getChatId(fromId: fromId, toId: toId);
+    return firebaseFirestore
+        .collection(collectionChatroom)
+        .doc(chatId)
+        .collection(collectionMessages)
+        .where("readAt", isEqualTo: "")
+        .where('senderId', isEqualTo: toId)
+        .snapshots();
+  }
+
   static Future<void> signOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(PREFS_USER_ID);
+    await prefs.remove(prefsUserId);
     await firebaseAuth.signOut();
   }
 }

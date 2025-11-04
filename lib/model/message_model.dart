@@ -5,7 +5,7 @@ class MessageModel {
   final String? readAt;
   final String? messageId;
   final String? sendAt;
-  final String? receivedAt;
+  // final String? receivedAt;
   final int? messageType;
   final String? imageUrl;
 
@@ -15,7 +15,7 @@ class MessageModel {
     this.receiverId,
     this.messageId,
     this.sendAt,
-    this.receivedAt = "",
+    // this.receivedAt = "",
     this.readAt = "",
     this.messageType = 0,
     this.imageUrl = "",
@@ -28,7 +28,7 @@ class MessageModel {
       receiverId: json['receiverId'],
       messageId: json['messageId'],
       sendAt: json['sendAt'],
-      receivedAt: json['receivedAt'],
+      // receivedAt: json['receivedAt'],
       readAt: json['readAt'],
       messageType: json['messageType'],
       imageUrl: json['imageUrl'],
@@ -42,7 +42,7 @@ class MessageModel {
       'receiverId': receiverId,
       'messageId': messageId,
       'sendAt': sendAt,
-      'receivedAt': receivedAt,
+      // 'receivedAt': receivedAt,
       'readAt': readAt,
       'messageType': messageType,
       'imageUrl': imageUrl,

@@ -201,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
             message.message ?? '',
@@ -212,6 +212,12 @@ class _ChatScreenState extends State<ChatScreen> {
             getFormattedTime(message.sendAt),
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
+          SizedBox(height: 4),
+          Icon(
+            Icons.done_all_rounded,
+            size: 16,
+            color: message.readAt != "" ? Colors.blue : Colors.grey,
+          ),
         ],
       ),
     );
@@ -219,6 +225,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // right side chat box (sender)
   Widget _senderChatBox(MessageModel message) {
+    // Update read status
+    if (message.readAt == "") {
+      FirebaseRepository.updateReadStatus(
+        toId: toId,
+        fromId: fromId,
+        messageId: message.messageId ?? '',
+      );
+    }
     return Container(
       constraints: BoxConstraints(maxWidth: 250),
       padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -235,7 +249,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Text(
             message.message ?? '',
-            style: TextStyle(color: Colors.black, fontSize: 16),
+            style: TextStyle(color: Colors.black, fontSize: 15),
           ),
           SizedBox(height: 4),
           Text(
