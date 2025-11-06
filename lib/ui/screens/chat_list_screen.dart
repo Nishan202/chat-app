@@ -197,9 +197,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                       fromId: fromId,
                                     ),
                                 builder: (_, undreadMessageCountSnapShot) {
-                                  Logger().i(
-                                    "Unread Message Count Snapshot: ${undreadMessageCountSnapShot.data?.docs.length}",
-                                  );
                                   if (undreadMessageCountSnapShot.hasData &&
                                       undreadMessageCountSnapShot
                                           .data!

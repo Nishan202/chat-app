@@ -112,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     return Center(child: Text("No messages yet."));
                   }
                   return ListView.builder(
-                    // reverse: true,
+                    reverse: true,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 8,
@@ -203,10 +203,24 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            message.message ?? '',
-            style: TextStyle(color: Colors.black, fontSize: 16),
-          ),
+          message.messageType == 0
+              ? Text(
+                message.message ?? '',
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              )
+              : message.message != ""
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.network(message.imageUrl ?? ''),
+                  SizedBox(height: 8),
+                  Text(
+                    message.message ?? '',
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                ],
+              )
+              : Image.network(message.imageUrl ?? ''),
           SizedBox(height: 4),
           Text(
             getFormattedTime(message.sendAt),
@@ -247,10 +261,24 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            message.message ?? '',
-            style: TextStyle(color: Colors.black, fontSize: 15),
-          ),
+          message.messageType == 0
+              ? Text(
+                message.message ?? '',
+                style: TextStyle(color: Colors.black, fontSize: 15),
+              )
+              : message.message != ""
+              ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.network(message.imageUrl ?? ''),
+                  SizedBox(height: 8),
+                  Text(
+                    message.message ?? '',
+                    style: TextStyle(color: Colors.black, fontSize: 15),
+                  ),
+                ],
+              )
+              : Image.network(message.imageUrl ?? ''),
           SizedBox(height: 4),
           Text(
             getFormattedTime(message.sendAt),

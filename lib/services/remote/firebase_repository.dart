@@ -150,7 +150,7 @@ class FirebaseRepository {
         .collection(collectionChatroom)
         .doc(chatId)
         .collection(collectionMessages)
-        .orderBy('sendAt', descending: false)
+        .orderBy('sendAt', descending: true)
         .snapshots();
   }
 
