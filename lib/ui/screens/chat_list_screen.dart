@@ -102,16 +102,19 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           style: ListTileStyle.drawer,
-                          leading: CircleAvatar(
-                            backgroundImage:
-                                currentModel.profilePic != ""
-                                    ? NetworkImage(
-                                      currentModel.profilePic ?? '',
-                                    )
-                                    : AssetImage(
-                                          ImagePath.default_profile_image_2,
-                                        )
-                                        as ImageProvider,
+                          leading: Hero(
+                            tag: 'profile_${currentModel.userId}',
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  currentModel.profilePic != ""
+                                      ? NetworkImage(
+                                        currentModel.profilePic ?? '',
+                                      )
+                                      : AssetImage(
+                                            ImagePath.default_profile_image_2,
+                                          )
+                                          as ImageProvider,
+                            ),
                           ),
                           title: Text(currentModel.name ?? ""),
                           subtitle: StreamBuilder(

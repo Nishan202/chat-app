@@ -11,6 +11,7 @@ class FirebaseRepository {
 
   static const String collectionUsers = "users";
   static const String collectionChatroom = "chatroom";
+  static const String mediaCollection = "media";
   static const String collectionMessages = "messages";
   static const String idsField = "ids";
   static const String prefsUserId = "userId";
@@ -144,6 +145,7 @@ class FirebaseRepository {
   static Stream<QuerySnapshot<Map<String, dynamic>>> getChatStream({
     required String toId,
     required String fromId,
+    int limit = 20,
   }) {
     String chatId = getChatId(fromId: fromId, toId: toId);
     return firebaseFirestore
@@ -151,7 +153,35 @@ class FirebaseRepository {
         .doc(chatId)
         .collection(collectionMessages)
         .orderBy('sendAt', descending: true)
+        .limit(limit)
         .snapshots();
+  }
+
+  /// Fetch older messages for pagination
+  static Future<List<MessageModel>> getOlderMessages({
+    required String toId,
+    required String fromId,
+    required String lastMessageTimestamp,
+    int limit = 20,
+  }) async {
+    String chatId = getChatId(fromId: fromId, toId: toId);
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await firebaseFirestore
+              .collection(collectionChatroom)
+              .doc(chatId)
+              .collection(collectionMessages)
+              .orderBy('sendAt', descending: true)
+              .startAfter([lastMessageTimestamp])
+              .limit(limit)
+              .get();
+
+      return querySnapshot.docs
+          .map((doc) => MessageModel.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      throw Exception("Error fetching older messages: $e");
+    }
   }
 
   static Future<List<MessageModel>> getAllMessages({

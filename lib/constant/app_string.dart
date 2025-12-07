@@ -12,7 +12,8 @@ class AppString {
   static const smallEmail = 'Email is too small';
   static const emptyPassMessage = "Password shouldn't be empty";
   static const signIn = 'Sign In';
-  static const signInSubHeading = 'Please sign into your account to get started.';
+  static const signInSubHeading =
+      'Please sign into your account to get started.';
   static const signUp = 'Sign Up';
   static const signUpSubHeading = 'Please sign up into your account.';
   static const fullNameHint = 'Full Name';
@@ -29,7 +30,8 @@ class AppString {
   static const dontHaveAnAccount = "Don’t have an account?";
   static const sendBtnText = 'Send';
   static const verification = 'Verification';
-  static const verificationSubHeading = 'Enter the verification code that has been sent to your email.';
+  static const verificationSubHeading =
+      'Enter the verification code that has been sent to your email.';
   static const dontRecieveCode = "If you didn’t receive a code?";
   static const recentBtnText = 'Resend';
   static const verifyBtnText = 'Verify';
@@ -38,13 +40,16 @@ class AppString {
   static const enterNewPasswordSubHeading = 'Please enter the new password';
   static const confirmNewPassword = 'Confirm New Password';
   static const passwordResetSuccessful = 'Password Reset Successful!';
-  static const resetSuccessMessage = 'Your password has been successfully reset. You can now sign in with your new password.';
+  static const resetSuccessMessage =
+      'Your password has been successfully reset. You can now sign in with your new password.';
   static const gotoSignInBtnText = 'Go to Sign In';
   static const regionBtnErrorMessage = 'Please select a region';
   static const subscriptionPlan = 'Subscription Plan';
   static const tryItFreeFor30Days = 'Try It Free for 30 Days!';
-  static const tryItFreeFor30DaysSubheading = 'First 30 days free then \$9.99 per month';
-  static const planDetailsContent = 'Get access to all premium features, track key metrics, and optimise your business performance risk-free.';
+  static const tryItFreeFor30DaysSubheading =
+      'First 30 days free then \$9.99 per month';
+  static const planDetailsContent =
+      'Get access to all premium features, track key metrics, and optimise your business performance risk-free.';
   static const freeTrailBtnText = 'Start My Free Trial';
   static const chooseThePlan = "Choose The Plan";
   static const monthly = "Monthly";
@@ -59,26 +64,34 @@ class AppString {
   static const contactUs = "Contact Us";
   static const deleteAccount = "Delete Account";
   static const deleteBtnText = "Delete";
-  static const deleteAccountSubheading = "Are you sure you want to delete your account?";
+  static const deleteAccountSubheading =
+      "Are you sure you want to delete your account?";
   static const subscribeBtnText = "Subscribe";
   static const skipBtnText = "Skip";
   static const planDetailsHeading = "Plan Details";
-  static const planDetailsContent1 = "Get started with our Premium plan – enjoy a 30-day free trial!";
-  static const planDetailsContent2 = "Choose your plan and enter payment details at sign-up.";
-  static const planDetailsContent3 = "Cancel anytime within the first 30 days to avoid charges.";
-  static const planDetailsContent4 = "If not cancelled, your subscription starts automatically after 30 days, and payment is processed.";
+  static const planDetailsContent1 =
+      "Get started with our Premium plan – enjoy a 30-day free trial!";
+  static const planDetailsContent2 =
+      "Choose your plan and enter payment details at sign-up.";
+  static const planDetailsContent3 =
+      "Cancel anytime within the first 30 days to avoid charges.";
+  static const planDetailsContent4 =
+      "If not cancelled, your subscription starts automatically after 30 days, and payment is processed.";
   static const startFreeTrialBtnText = "Start My Free Trial";
-  static const choosePlanThatsRightForYou = "Choose the plan that's right for you.";
+  static const choosePlanThatsRightForYou =
+      "Choose the plan that's right for you.";
   static const paymentDetailsHeading = "Payment Details";
   static const selectPaymentMethodSubheading = "Select Payment Method.";
   static const paymentSuccessful = "Payment Successful";
-  static const subscriptionActiveSubheading = "Your subscription is now active!";
+  static const subscriptionActiveSubheading =
+      "Your subscription is now active!";
   static const details = "Details";
   static const planLabel = "Plan";
   static const activePlan = "Active Plan";
   static const planName = "Plan name";
   static const cancelSubscriptionBtnText = "Cancel Subscription";
-  static const cancelSubscriptionSubheading = "Are you sure you want to cancel your subscription?";
+  static const cancelSubscriptionSubheading =
+      "Are you sure you want to cancel your subscription?";
   static const nextBillingDate = 'Next Billing Date';
   static const planDetails = "Monthly Plan";
   static const upgradePlan = "Upgrade Plan";
@@ -110,7 +123,8 @@ class AppString {
   static const completedOn = "Completed on";
   static const manageMentFee = "Management Fee";
   static const youHaveNotsetAnyGoals = 'You have not set any goals';
-  static const goalsPageSubheading = 'Define your growth targets and track progress towards success.';
+  static const goalsPageSubheading =
+      'Define your growth targets and track progress towards success.';
   static const addNewGoalsBtnText = 'Add New Goals';
   static const createNewGoal = "Create a New Goal";
   static const goalNameLabel = "Goal Name";
@@ -129,13 +143,16 @@ class AppString {
   static const pumText = "Properties Under Management (PUM)";
   static const averageWeeklyRentLabel = "Average Weekly Rent (\$) *";
   static const managementFeeGSTLabel = "Management Fee ex GST (%) *";
-  static const averageAnnualManagementIncomLabel = "Average Annual Management Income (AAMI) per property";
+  static const averageAnnualManagementIncomLabel =
+      "Average Annual Management Income (AAMI) per property";
   static const annualManagementIncomeLabel = "Annual Management Income (AMI)";
   static const additionalStatsFormText = "ADDITIONAL stats";
   static const invoiceArrearsLabel = "Invoice Arrears 14+ Days";
   static const expiringLeasesLabel = "Expiring Leases Next 90 Days";
-  static const routineInspectionsOverdueLabel = "No. Routine Inspections Overdue";
-  static const openMaintenanceRequestlabel = "Open Maintenance Requests 14+ Days";
+  static const routineInspectionsOverdueLabel =
+      "No. Routine Inspections Overdue";
+  static const openMaintenanceRequestlabel =
+      "Open Maintenance Requests 14+ Days";
   static const complianceItemsOverdueLabel = "No. Compliance Items Overdue";
   static const leaseRenewalsLable = "Lease Renewals Outstanding";
   static const noLandlordsLabel = "No. Landlords";
@@ -168,7 +185,8 @@ class AppString {
   static const gallery = "Gallery";
   static const editProfile = "Edit Profile";
   static const forgotPassword = 'Forgot Password?';
-  static const forgotPasswordSubHeading = 'Enter your email to recover your password.';
+  static const forgotPasswordSubHeading =
+      'Enter your email to recover your password.';
   static const submit = 'Submit';
   static const oldPassword = "Old Password";
   static const newPassword = 'New Password';
@@ -180,8 +198,17 @@ class AppString {
   static const update = 'Update';
   static const updatePasswordBtnText = "Update Password";
   static const updatePlanBtnText = "Upgrade Plan";
-  static const subscribeForChat = "If you want to use these feature, please subscribe now.";
+  static const subscribeForChat =
+      "If you want to use these feature, please subscribe now.";
   static const yes = 'Yes';
   static const noo = 'No';
   static const cancel = 'Cancel';
+  static const failedToCaptureImage = 'Failed to capture image';
+  static const failedToPickImage = 'Failed to pick image';
+  static const failedToPickImages = 'Failed to pick images';
+  static const failedToPickDocument = 'Failed to pick document';
+  static const failedToPickDocuments = 'Failed to pick documents';
+  static const fileTooLargeTitle = 'File too large';
+  static const fileTooLargeMessage = 'The file you selected is too large';
+  static const fileTooLarge = 'File too large';
 }

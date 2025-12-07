@@ -48,4 +48,18 @@ class MessageModel {
       'imageUrl': imageUrl,
     };
   }
+
+  /// Get list of image URLs from the imageUrl field
+  /// Supports comma-separated URLs or single URL
+  List<String> getImageUrls() {
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return [];
+    }
+    // Split by comma and filter out empty strings
+    return imageUrl!
+        .split(',')
+        .map((url) => url.trim())
+        .where((url) => url.isNotEmpty)
+        .toList();
+  }
 }
